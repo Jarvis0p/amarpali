@@ -17,7 +17,7 @@ function check() {
     var sec = date.getSeconds();
     console.log(hr, min, sec);
     console.log("Being Called");
-    if (hr === 11 && min === 51 && sec === 0) {
+    if (hr === 23 && min === 59 && sec === 59) {
         count = count + 1;
         console.log("count from " + count);
         console.log("Count " + count);
