@@ -1,10 +1,31 @@
-const express = require("express");
+var http = require('http'),
+    https = require('https'),
+    express = require('express')
+    fs = require('fs');
+
+var domain = 'amarpali.me';
+
+
+
 const ejs = require("ejs");
 
-const app = express();
+var app = express();
 
-app.set('view engine', 'ejs');
-app.use(express.static("public"));
+app.get('*', function(req, res){
+    // redirect to HTTPS
+    res.redirect('https://' + domain + req.path);
+});
+
+http.createServer(app).listen(80, function(){
+    console.log('HTTP listening on port 80');
+});
+
+var appSecure = express();
+// configure your app here
+
+
+appSecure.set('view engine', 'ejs');
+appSecure.use(express.static("public"));
 
 
 var count = 1;
@@ -25,12 +46,24 @@ function check() {
 }
 
 setInterval(check, 1000)
-app.get("/", function (req, res) {
+appSecure.get("/", function (req, res) {
     res.render("home", {
         data: dutyIncIndex
     })
 });
 
-app.listen(process.env.PORT || 3000, function () {
-    console.log("Server Started on port 3000");
+// app.listen(process.env.PORT || 3000, function () {
+//     console.log("Server Started on port 3000");
+// });
+
+
+
+
+var options = {
+  key: fs.readFileSync('amarpali_me.pem'),
+  cert: fs.readFileSync('amarpali_me.crt'),
+};
+
+https.createServer(options, appSecure).listen(443, function(){
+    console.log('HTTPS listening on port 443');
 });
